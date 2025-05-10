@@ -43,9 +43,7 @@ process.env.CHROME_PATH = process.env.CHROME_PATH || findChromePath()
 console.log("[1] CHROME_PATH:", process.env.CHROME_PATH);
 
 app.get("/screenshot", (req, res) => {
-  console.log("[-] GET /screenshot chamado");
   const imgPath = path.join(__dirname, "screenshot.png");
-  console.log("[-] Caminho da imagem:", imgPath);
   res.setHeader("Content-Type", "image/png");
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   res.setHeader("Pragma", "no-cache");
