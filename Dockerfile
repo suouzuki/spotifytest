@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
   ca-certificates \
   libxss1 \
   libappindicator3-1 \
-  libindicator7 \
   fonts-liberation \
   libappindicator1 \
   libnss3 \
