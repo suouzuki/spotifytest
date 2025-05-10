@@ -11,6 +11,7 @@ function findChromePath() {
 
   try {
     const whichPath = execSync('which google-chrome', { encoding: 'utf-8' }).trim();
+    console.log(whichPath)
     if (whichPath && fs.existsSync(whichPath)) possiblePaths.push(whichPath);
   } catch {}
 
@@ -18,6 +19,7 @@ function findChromePath() {
     const whereisOutput = execSync('whereis google-chrome', { encoding: 'utf-8' }).trim();
     const paths = whereisOutput.split(' ').slice(1);
     paths.forEach(path => {
+      console.log(path)
       if (fs.existsSync(path)) possiblePaths.push(path);
     });
   } catch {}
@@ -26,6 +28,7 @@ function findChromePath() {
     const findPath = execSync('find / -type f -name "google-chrome" 2>/dev/null', { encoding: 'utf-8' }).trim();
     const lines = findPath.split('\n');
     lines.forEach(path => {
+      console.log(path)
       if (fs.existsSync(path)) possiblePaths.push(path);
     });
   } catch {}
@@ -42,7 +45,7 @@ exec('which Xvfb', (error, stdout, stderr) => {
     console.log('Xvfb encontrado em:', stdout.trim());
   }
 });
-
+console.log(process.env.CHROME_PATH)
 process.env.CHROME_PATH = process.env.CHROME_PATH || findChromePath()
 console.log("[1] CHROME_PATH:", process.env.CHROME_PATH);
 
