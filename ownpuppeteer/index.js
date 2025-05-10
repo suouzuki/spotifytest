@@ -18,7 +18,7 @@ async function connect({
       for (const plugin of plugins) {
         puppeteer.use(plugin);
       }
-      console.log("[1] Plugins puppeteer-extra carregados com sucesso");
+      console.log("[1] Plugins puppeteer-extra carregados com sucesso")
     } catch (e) {
       console.warn("[1] Erro ao carregar plugins no puppeteer-extra:", e.message);
     }
