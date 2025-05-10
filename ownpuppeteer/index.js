@@ -1,6 +1,6 @@
 const puppeteerBase = require("rebrowser-puppeteer-core");
 const { pageController } = require("./pageController.js");
-const { Launcher } = require("chrome-launcher");
+const Launcher = require("chrome-launcher");
 
 let puppeteer = puppeteerBase;
 let Xvfb = null;
