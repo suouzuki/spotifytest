@@ -130,12 +130,15 @@ async function connect({
     plugins,
   };
 
+console.log(pageControllerConfig)
+
   try {
     page = await pageController({
       ...pageControllerConfig,
       killProcess: true,
       chrome,
     });
+    console.log('page definido')
   } catch (err) {
     console.warn("Erro ao configurar pageController:", err.message);
   }
