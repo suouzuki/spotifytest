@@ -7,34 +7,27 @@ const app = express();
 const { exec } = require('child_process');
 
 function findChromePath() {
-  const possiblePaths = [];
+  const possiblePaths = [
+    '/usr/bin/google-chrome',
+    '/usr/bin/google-chrome-stable',
+    '/opt/google/chrome/google-chrome',
+    '/opt/google/chrome/google-chrome-stable'
+  ];
 
-  try {
-    const whichPath = execSync('which google-chrome', { encoding: 'utf-8' }).trim();
-    console.log(1, whichPath)
-    if (whichPath && fs.existsSync(whichPath)) possiblePaths.push(whichPath);
-  } catch {}
+  for (let path of possiblePaths) {
+    try {
+      // Verifica se o caminho existe
+      if (fs.existsSync(path)) {
+        console.log(`Google Chrome encontrado em: ${path}`);
+        return path;
+      }
+    } catch (err) {
+      console.error(`Erro ao verificar o caminho ${path}:`, err);
+    }
+  }
 
-  try {
-    const whereisOutput = execSync('whereis google-chrome', { encoding: 'utf-8' }).trim();
-    const paths = whereisOutput.split(' ').slice(1);
-    paths.forEach(path => {
-      console.log(12, path)
-      if (fs.existsSync(path)) possiblePaths.push(path);
-    });
-  } catch {}
-
-  try {
-    const findPath = execSync('find / -type f -name "google-chrome" 2>/dev/null', { encoding: 'utf-8' }).trim();
-    const lines = findPath.split('\n');
-    lines.forEach(path => {
-      console.log(13, path)
-      if (fs.existsSync(path)) possiblePaths.push(path);
-    });
-  } catch {}
-
-  const uniquePaths = [...new Set(possiblePaths)];
-  return uniquePaths.length > 0 ? uniquePaths[0] : null;
+  console.log('Google Chrome não encontrado.');
+  return null;
 }
 
 exec('which Xvfb', (error, stdout, stderr) => {
