@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
   libnss3 \
   libx11-xcb1 \
   libgbm1 \
-  xvfb \  # Instalação do Xvfb
+  xvfb \
   && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
   && apt-get update \
