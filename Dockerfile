@@ -1,19 +1,31 @@
-# Usando uma imagem base com Node.js
-FROM node:16
+# Usando uma imagem base do Node.js (Debian/Ubuntu)
+FROM node:22
 
-# Instala o Xvfb e o Chrome
+# Instalando dependências do sistema para Xvfb e Google Chrome
 RUN apt-get update && apt-get install -y \
-  wget \
-  curl \
-  xvfb \
-  google-chrome-stable
+    wget \
+    curl \
+    xvfb \
+    google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copiar arquivos do seu projeto para o container
+# Definindo diretório de trabalho dentro do container
 WORKDIR /app
+
+# Copiar os arquivos de dependências
+COPY package.json package-lock.json ./
+
+# Instalar dependências (apenas de produção)
+RUN npm install --production
+
+# Copiar o restante dos arquivos do projeto
 COPY . .
 
-# Instalar dependências
-RUN npm install
+# Definir a variável de ambiente para o Chrome
+ENV CHROME_PATH="/usr/bin/google-chrome"
 
-# Configuração para iniciar o Xvfb e o Chrome, e rodar o seu app
-CMD xvfb-run --auto-servernum --server-args="-screen 0, 1024x768x24" google-chrome-stable --headless --no-sandbox --disable-gpu && npm start
+# Expor a porta da aplicação
+EXPOSE 3000
+
+# Comando para rodar a aplicação
+CMD ["npm", "run", "start"]

@@ -1,7 +1,25 @@
 {
+  "name": "spotifytest",
+  "version": "1.0.0",
+  "description": "A project for testing Spotify-related functionalities using Puppeteer",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "keywords": [
+    "spotify",
+    "puppeteer",
+    "automation",
+    "nodejs"
+  ],
+  "author": "suouzuki",
+  "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "puppeteer-real-browser": "^1.4.2"
   }
 }
+
