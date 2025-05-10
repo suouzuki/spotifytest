@@ -75,7 +75,7 @@ async function test() {
     connectOption: {},
     disableXvfb: false,
     ignoreAllFlags: false,
-    plugins: [stealthPlugin()],
+    //plugins: [stealthPlugin()],
     executablePath: process.env.CHROME_PATH,
   });
 
