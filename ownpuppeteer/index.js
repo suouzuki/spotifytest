@@ -1,90 +1,15 @@
 const puppeteerBase = require("rebrowser-puppeteer-core");
 const { pageController } = require("./pageController.js");
-const { launch, Launcher } = require("chrome-launcher");
 
 let puppeteer = puppeteerBase;
-let Xvfb = null;
-
-try {
-  Xvfb = require("xvfb");
-} catch {}
 
 async function connect({
-  args = [],
-  headless = false,
-  customConfig = {},
   proxy = {},
   turnstile = false,
   connectOption = {},
-  disableXvfb = false,
   plugins = [],
-  ignoreAllFlags = false,
 } = {}) {
-  let xvfbsession = null;
-
-  if (headless === "auto") headless = false;
-
-  if (process.platform === "linux" && !disableXvfb && Xvfb) {
-    try {
-      xvfbsession = new Xvfb({
-        silent: true,
-        xvfb_args: ["-screen", "0", "1920x1080x24", "-ac"],
-      });
-      xvfbsession.startSync();
-      console.log("[1] Xvfb iniciado com sucesso");
-    } catch (err) {
-      console.warn("[1] Erro ao iniciar Xvfb:", err.message);
-    }
-  }
-
-  let chromeFlags;
-
-  if (ignoreAllFlags === true) {
-    chromeFlags = [
-      ...args,
-      ...(headless !== false ? [`--headless=${headless}`] : []),
-      ...(proxy?.host && proxy?.port
-        ? [`--proxy-server=${proxy.host}:${proxy.port}`]
-        : []),
-    ];
-  } else {
-    const flags = Launcher.defaultFlags();
-
-    const indexDisableFeatures = flags.findIndex(f =>
-      f.startsWith("--disable-features")
-    );
-    if (indexDisableFeatures >= 0) {
-      flags[indexDisableFeatures] += ",AutomationControlled";
-    }
-
-    const indexComponentUpdate = flags.findIndex(f =>
-      f.startsWith("--disable-component-update")
-    );
-    if (indexComponentUpdate >= 0) {
-      flags.splice(indexComponentUpdate, 1);
-    }
-
-    chromeFlags = [
-      ...flags,
-      ...args,
-      ...(headless !== false ? [`--headless=${headless}`] : []),
-      ...(proxy?.host && proxy?.port
-        ? [`--proxy-server=${proxy.host}:${proxy.port}`]
-        : []),
-      "--no-sandbox",
-      "--disable-dev-shm-usage",
-    ];
-  }
-
-  console.log("[2] Flags do Chrome preparadas:", chromeFlags);
-
-  const chrome = await launch({
-    ignoreDefaultFlags: true,
-    chromeFlags,
-    ...customConfig,
-  });
-
-  console.log("[3] Chrome iniciado na porta:", chrome.port);
+  const BROWSERLESS_ENDPOINT = "wss://chrome.browserless.io?token=2SHvm8ayx0iA26B5ff3d109a6df047b1e312fe6c3661eb670";
 
   if (plugins.length > 0) {
     try {
@@ -93,43 +18,44 @@ async function connect({
       for (const plugin of plugins) {
         puppeteer.use(plugin);
       }
-      console.log("[4] Plugins puppeteer-extra carregados com sucesso");
+      console.log("[1] Plugins puppeteer-extra carregados com sucesso");
     } catch (e) {
-      console.warn("[4] Erro ao carregar plugins no puppeteer-extra:", e.message);
+      console.warn("[1] Erro ao carregar plugins no puppeteer-extra:", e.message);
     }
   }
 
   let browser;
   try {
     browser = await puppeteer.connect({
-      browserURL: `http://127.0.0.1:${chrome.port}`,
+      browserWSEndpoint: BROWSERLESS_ENDPOINT,
       ...connectOption,
     });
-    console.log("[5] Conectado ao navegador via Puppeteer");
+    console.log("[2] Conectado ao Browserless.io via Puppeteer");
   } catch (err) {
-    throw new Error("[5] Erro ao conectar ao navegador: " + err.message);
+    throw new Error("[2] Erro ao conectar ao navegador remoto: " + err.message);
   }
 
   let pages;
   try {
     pages = await browser.pages();
-    console.log("[6] Páginas abertas recuperadas com sucesso");
+    console.log("[3] Páginas abertas recuperadas com sucesso");
   } catch {
     pages = [];
-    console.log("[6] Nenhuma página aberta recuperada");
+    console.log("[3] Nenhuma página aberta recuperada");
   }
 
   let page = pages.length > 0 ? pages[0] : null;
 
   if (!page) {
     try {
+      console.log('[4] tentando criar pagina');
       page = await browser.newPage();
-      console.log("[7] Nova página criada com sucesso");
+      console.log("[4] Nova página criada com sucesso");
     } catch (err) {
-      throw new Error("[7] Falha ao criar nova página: " + err.message);
+      throw new Error("[4] Falha ao criar nova página: " + err.message);
     }
   } else {
-    console.log("[7] Página existente reutilizada");
+    console.log("[4] Página existente reutilizada");
   }
 
   const pageControllerConfig = {
@@ -137,22 +63,21 @@ async function connect({
     page,
     proxy,
     turnstile,
-    xvfbsession,
-    pid: chrome.pid,
+    xvfbsession: null,
+    pid: null,
     plugins,
   };
 
-  console.log("[8] Configuração do pageController preparada");
+  console.log("[5] Configuração do pageController preparada");
 
   try {
     page = await pageController({
       ...pageControllerConfig,
-      killProcess: true,
-      chrome,
+      killProcess: false,
     });
-    console.log("[9] pageController executado com sucesso");
+    console.log("[6] pageController executado com sucesso");
   } catch (err) {
-    console.warn("[9] Erro ao configurar pageController:", err.message);
+    console.warn("[6] Erro ao configurar pageController:", err.message);
   }
 
   browser.on("targetcreated", async (target) => {
@@ -170,7 +95,7 @@ async function connect({
     }
   });
 
-  console.log("[10] Navegador pronto para uso");
+  console.log("[7] Navegador pronto para uso");
 
   return {
     browser,
