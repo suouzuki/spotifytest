@@ -31,6 +31,7 @@ async function connect({
         xvfb_args: ["-screen", "0", "1920x1080x24", "-ac"],
       });
       xvfbsession.startSync();
+      console.log('XVFB', xvfbsession)
     } catch (err) {
       console.warn("Erro ao iniciar Xvfb:", err.message);
     }
@@ -75,6 +76,8 @@ async function connect({
     ];
   }
 
+console.log(2, chromeFlags)
+
   const chrome = await launch({
     ignoreDefaultFlags: true,
     chromeFlags,
@@ -99,6 +102,7 @@ async function connect({
       browserURL: `http://127.0.0.1:${chrome.port}`,
       ...connectOption,
     });
+   console.log(2, browser)
   } catch (err) {
     throw new Error("Erro ao conectar ao navegador: " + err.message);
   }
@@ -109,6 +113,7 @@ async function connect({
   } catch {
     pages = [];
   }
+console.log(2, pages)
 
   let page = pages.length > 0 ? pages[0] : null;
 
@@ -119,6 +124,7 @@ async function connect({
       throw new Error("Falha ao criar nova página: " + err.message);
     }
   }
+console.log(2, page)
 
   const pageControllerConfig = {
     browser,
@@ -138,7 +144,7 @@ console.log(pageControllerConfig)
       killProcess: true,
       chrome,
     });
-    console.log('page definido')
+    console.log(2, 'page definido')
   } catch (err) {
     console.warn("Erro ao configurar pageController:", err.message);
   }
