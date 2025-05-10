@@ -3,7 +3,7 @@ const path = require("node:path");
 const fs = require("node:fs");
 const express = require("express");
 const app = express();
-
+console.log(process.env.CHROME_PATH)
 app.get("/screenshot", (req, res) => {
   const imgPath = path.join(__dirname, "screenshot.png");
   res.setHeader("Content-Type", "image/png");
@@ -35,7 +35,7 @@ async function test() {
     disableXvfb: false,
     ignoreAllFlags: false,
     plugins: [stealthPlugin()],
-    executablePath: "/usr/bin/google-chrome",
+    executablePath: process.env.CHROME_PATH,
   });
 
   await page.setUserAgent(
