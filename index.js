@@ -108,14 +108,13 @@ if (!page) {
 
   const startScreenshotLoop = async () => {
     console.log("[-] Iniciando loop de screenshots...");
-    while (true) {
-      try {
+setInterval(() => {
+try {
         await page.screenshot({ path: screenshotPath });
       } catch (err) {
         console.log("[-] Erro ao tirar screenshot:", err.message);
       }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
+}, 1000)
   };
 
   startScreenshotLoop();
