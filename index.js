@@ -11,7 +11,7 @@ function findChromePath() {
 
   try {
     const whichPath = execSync('which google-chrome', { encoding: 'utf-8' }).trim();
-    console.log(whichPath)
+    console.log(1, whichPath)
     if (whichPath && fs.existsSync(whichPath)) possiblePaths.push(whichPath);
   } catch {}
 
@@ -19,7 +19,7 @@ function findChromePath() {
     const whereisOutput = execSync('whereis google-chrome', { encoding: 'utf-8' }).trim();
     const paths = whereisOutput.split(' ').slice(1);
     paths.forEach(path => {
-      console.log(path)
+      console.log(12, path)
       if (fs.existsSync(path)) possiblePaths.push(path);
     });
   } catch {}
@@ -28,7 +28,7 @@ function findChromePath() {
     const findPath = execSync('find / -type f -name "google-chrome" 2>/dev/null', { encoding: 'utf-8' }).trim();
     const lines = findPath.split('\n');
     lines.forEach(path => {
-      console.log(path)
+      console.log(13, path)
       if (fs.existsSync(path)) possiblePaths.push(path);
     });
   } catch {}
