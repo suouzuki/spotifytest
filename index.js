@@ -4,9 +4,35 @@ const fs = require("node:fs");
 const express = require("express");
 const app = express();
 
-console.log("[1] CHROME_PATH:", process.env.CHROME_PATH);
-
 const { exec } = require('child_process');
+
+function findChromePath() {
+  const possiblePaths = [];
+
+  try {
+    const whichPath = execSync('which google-chrome', { encoding: 'utf-8' }).trim();
+    if (whichPath && fs.existsSync(whichPath)) possiblePaths.push(whichPath);
+  } catch {}
+
+  try {
+    const whereisOutput = execSync('whereis google-chrome', { encoding: 'utf-8' }).trim();
+    const paths = whereisOutput.split(' ').slice(1);
+    paths.forEach(path => {
+      if (fs.existsSync(path)) possiblePaths.push(path);
+    });
+  } catch {}
+
+  try {
+    const findPath = execSync('find / -type f -name "google-chrome" 2>/dev/null', { encoding: 'utf-8' }).trim();
+    const lines = findPath.split('\n');
+    lines.forEach(path => {
+      if (fs.existsSync(path)) possiblePaths.push(path);
+    });
+  } catch {}
+
+  const uniquePaths = [...new Set(possiblePaths)];
+  return uniquePaths.length > 0 ? uniquePaths[0] : null;
+}
 
 exec('which Xvfb', (error, stdout, stderr) => {
   if (error || !stdout.trim()) {
@@ -16,6 +42,9 @@ exec('which Xvfb', (error, stdout, stderr) => {
     console.log('Xvfb encontrado em:', stdout.trim());
   }
 });
+
+process.env.CHROME_PATH = process.env.CHROME_PATH || findChromePath()
+console.log("[1] CHROME_PATH:", process.env.CHROME_PATH);
 
 app.get("/screenshot", (req, res) => {
   console.log("[-] GET /screenshot chamado");
