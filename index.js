@@ -1,4 +1,4 @@
-const { connect } = require("puppeteer-real-browser");
+const { connect } = require("./ownpuppeteer/index.js");
 const path = require("node:path");
 const fs = require("node:fs");
 const express = require("express");

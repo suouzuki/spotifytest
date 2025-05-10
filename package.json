@@ -17,9 +17,14 @@
   "author": "suouzuki",
   "license": "ISC",
   "dependencies": {
+    "chrome-launcher": "^1.2.0",
     "express": "^5.1.0",
+    "ghost-cursor": "^1.4.1",
+    "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "puppeteer-real-browser": "^1.4.2"
+    "puppeteer-real-browser": "^1.4.2",
+    "rebrowser-puppeteer-core": "^24.8.1",
+    "tree-kill": "^1.2.2",
+    "xvfb": "^0.4.0"
   }
 }
-
