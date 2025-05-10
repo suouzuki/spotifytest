@@ -1,7 +1,7 @@
 const puppeteerBase = require("rebrowser-puppeteer-core");
 const { pageController } = require("./pageController.js");
-const Launcher = require("chrome-launcher");
-
+const { launch, Launcher } = require("chrome-launcher");
+console.log(require("chrome-launcher"))
 let puppeteer = puppeteerBase;
 let Xvfb = null;
 
@@ -75,7 +75,7 @@ async function connect({
     ];
   }
 
-  const chrome = await Launcher.launch({
+  const chrome = await launch({
     ignoreDefaultFlags: true,
     chromeFlags,
     ...customConfig,
